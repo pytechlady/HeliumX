@@ -85,17 +85,18 @@ class Subcription(models.Model):
 
 class Session(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
     booking_date = models.DateTimeField(auto_now_add=True)
     session_date = models.DateField()
     is_done = models.BooleanField(default=False)
     
     def __str__(self):
-        return self.user.username
+        return self.title
     
     
 class Ticket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    session = models.ForeignKey(Session, on_delete=models.CASCADE)
     ticket_title = models.CharField(max_length=100)
     ticket_description = models.TextField()
     is_resolved = models.BooleanField(default=False)
@@ -103,4 +104,4 @@ class Ticket(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.user.username
+        return self.ticket_title

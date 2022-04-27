@@ -3,9 +3,9 @@ from webbrowser import get
 from requests import request
 from rest_framework.response import Response
 from django.shortcuts import render
-from .models import Subcription, User
+from .models import Subcription, User, Session, Ticket
 from rest_framework import generics, status, permissions
-from .serializers import AdminUserSerializer, UserListSerializer, LoginSerializer, UserUpdateSerializer, NewsLetter, UserSerializer, SubscriptionSerializer, SubscriptionListSerializer
+from .serializers import AdminUserSerializer, UserListSerializer, LoginSerializer, UserUpdateSerializer, NewsLetter, UserSerializer, SubscriptionSerializer, SubscriptionListSerializer, SessionSerializer, TicketSerializer
 from .permissions import IsCeo, IsCommunutyManager, IsAccountantPermissions, IsITSupportPermissions
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
@@ -243,4 +243,86 @@ class UpdateSubscription(generics.GenericAPIView):
         except Exception as error:
             return Response({"error":str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class CreateSession(generics.GenericAPIView):
+    permissions_classes = [permissions.IsAuthenticated, IsITSupportPermissions]
+    serializer_class = SessionSerializer
+    
+    """Endpoint to create a session"""
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            users = serializer.validated_data['users']
+            title = serializer.validated_data['title']
+            description = serializer.validated_data['description']
+            session_date = serializer.validated_data['session_date']
+            is_done = serializer.validated_data['is_done']
+            try:
+                Session.objects.create(title=title, session_date=session_date, description=description, user=users[0], is_done=is_done)
+                return Response({"success": f"A session has been created for {users}"}, status=status.HTTP_201_CREATED)
+            except Exception as error:
+                return Response({"error":str(error)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class UpdateSession(generics.GenericAPIView):
+    permissions_classes = [permissions.IsAuthenticated, IsITSupportPermissions]
+    serializer_class = SessionSerializer
+    
+    """Endpoint to get all sessions"""
+    def get(self, request):
+        get_sessions = Session.objects.all()
+        serializer = SessionSerializer(get_sessions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    """Endpoint to update session progress"""
+    def patch(self, request, pk):
+        get_session = Session.objects.get(pk=pk)
+        serializer = SessionSerializer(get_session, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"success": f"{get_session} successfully updated"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class CreateTickets(generics.GenericAPIView):
+    permissions_classes = [permissions.IsAuthenticated, IsITSupportPermissions]
+    serializer_class = TicketSerializer
+    
+    """Endpoint to create a ticket"""
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            users = serializer.validated_data['users']
+            ticket_title = serializer.validated_data['ticket_title']
+            ticket_description = serializer.validated_data['ticket_description']
+            is_resolved = serializer.validated_data['is_resolved']
+            try:
+                Ticket.objects.create(ticket_title=ticket_title, ticket_description=ticket_description, is_resolved=is_resolved, user=users[0])
+                return Response({"success": f"A ticket has been created for {users}"}, status=status.HTTP_201_CREATED)
+            except Exception as error:
+                return Response({"error":str(error)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class UpdateTickets(generics.GenericAPIView):
+    permissions_classes = [permissions.IsAuthenticated, IsITSupportPermissions]
+    serializer_class = TicketSerializer
+    
+    """Endpoint to get all tickets"""
+    def get(self, request):
+        get_tickets = Ticket.objects.all()
+        serializer = TicketSerializer(get_tickets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    """Endpoint to update ticket progress"""
+    def patch(self, request, pk):
+        get_ticket = Ticket.objects.get(pk=pk)
+        serializer = TicketSerializer(get_ticket, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"success": f"{get_ticket} successfully resolved"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD)
+
+   
                 

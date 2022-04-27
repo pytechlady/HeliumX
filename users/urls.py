@@ -12,4 +12,8 @@ urlpatterns = [
     path('user/<int:pk>', UpdateUserByCommunityManager.as_view(), name='user'),
     path('subscribe', CreateSubscription.as_view(), name='subscribe'),
     path('user/<int:pk>/subscribe', UpdateSubscription.as_view(), name='subscribe'),
+    path('session', CreateSession.as_view(), name='session'),
+    path('session/<int:pk>', UpdateSession.as_view(), name='session'),
+    path('ticket', CreateTickets.as_view(), name='ticket'),
+    path('ticket/<int:pk>', UpdateTickets.as_view(), name='ticket'),
 ]

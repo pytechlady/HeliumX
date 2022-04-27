@@ -49,3 +49,15 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subcription
         fields = "__all__"
+        
+class SessionSerializer(serializers.ModelSerializer):
+    users = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
+    class Meta:
+        model = Session
+        fields = ['users','title', 'description', 'session_date', 'is_done']
+        
+class TicketSerializer(serializers.ModelSerializer):
+    users = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
+    class Meta:
+        model = Ticket
+        fields = ['users', 'ticket_title', 'ticket_description', 'is_resolved']

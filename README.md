@@ -1,0 +1,12 @@
+- Run `python3 -m venv venv` to create a virtual environment.
+- Activate the virtual environment by running `source venv/bin/activate`.
+- Check the requirements.txt file for the required packages.
+- Run `pip install -r requirements.txt`.
+- Create a .env file in the root directory of the project.
+- Setup the .env file with the following variables:
+    - SECRET_KEY: A secret key.
+    - EMAIL_HOST 
+    - EMAIL_PORT 
+    - EMAIL_HOST_USER 
+    - EMAIL_HOST_PASSWORD 
+    - EMAIL_USE_TLS 
