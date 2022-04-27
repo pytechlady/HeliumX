@@ -47,6 +47,7 @@ class RegisterAdminsClass(generics.GenericAPIView):
 class UpdateAdminClass(generics.GenericAPIView):
     serializer_class = AdminUserSerializer
     permission_classes = (IsCeo,)
+    queryset = ''
     
     """Endpoint to check if a user or staff exists only accessible by CEO"""
     def get_user(self, pk):
@@ -105,6 +106,7 @@ class RegisterUsers(generics.GenericAPIView):
 class UpdateUserByCommunityManager(generics.GenericAPIView):
     permissions_classes = [permissions.IsAuthenticated, IsCommunutyManager]
     serializer_class = UserSerializer
+    queryset = ''
     
     """Endpoint to check if a user exists only accessible by Community Manager"""
     def get_user(self, pk):
@@ -214,6 +216,7 @@ class CreateSubscription(generics.GenericAPIView):
 class UpdateSubscription(generics.GenericAPIView):
     permissions_classes = [IsAccountantPermissions]
     serializer_class = SubscriptionListSerializer
+    queryset = ''
     
     """Endpoint to check if a user exists only accessible by Accountant"""
     def get_user(self, pk):
@@ -268,6 +271,7 @@ class CreateSession(generics.GenericAPIView):
 class UpdateSession(generics.GenericAPIView):
     permissions_classes = [permissions.IsAuthenticated, IsITSupportPermissions]
     serializer_class = SessionSerializer
+    queryset = ''
     
     """Endpoint to get all sessions"""
     def get(self, request):
@@ -308,6 +312,7 @@ class CreateTickets(generics.GenericAPIView):
 class UpdateTickets(generics.GenericAPIView):
     permissions_classes = [permissions.IsAuthenticated, IsITSupportPermissions]
     serializer_class = TicketSerializer
+    queryset = ''
     
     """Endpoint to get all tickets"""
     def get(self, request):
