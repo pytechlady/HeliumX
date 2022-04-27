@@ -76,6 +76,8 @@ TEMPLATES = [
     },
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 WSGI_APPLICATION = 'heliumx.wsgi.application'
 
 AUTH_USER_MODEL = 'users.User'
