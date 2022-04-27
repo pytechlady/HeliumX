@@ -4,7 +4,7 @@
 - Run `pip install -r requirements.txt`.
 - Create a .env file in the root directory of the project.
 - Setup the .env file with the following variables:
-    - SECRET_KEY: A secret key.
+    - SECRET_KEY
     - EMAIL_HOST 
     - EMAIL_PORT 
     - EMAIL_HOST_USER 
