@@ -22,11 +22,11 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Authentication API",
+      title="HeliumX API",
       default_version='v1',
       description="Test description",
       terms_of_service="https://www.heliumx.com/policies/terms/",
-      contact=openapi.Contact(email="contact@webank.local"),
+      contact=openapi.Contact(email="contact@heliumx.local"),
       license=openapi.License(name="Test License"),
    ),
    public=True,
