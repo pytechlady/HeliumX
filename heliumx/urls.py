@@ -26,7 +26,7 @@ schema_view = get_schema_view(
       default_version='v1',
       description="Test description",
       terms_of_service="https://www.heliumx.com/policies/terms/",
-      contact=openapi.Contact(email="contact@heliumx.local"),
+      contact=openapi.Contact(email="fumex9910@gmail.com"),
       license=openapi.License(name="Test License"),
    ),
    public=True,
