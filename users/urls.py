@@ -16,4 +16,5 @@ urlpatterns = [
     path('session/<int:pk>', UpdateSession.as_view(), name='session'),
     path('ticket', CreateTickets.as_view(), name='ticket'),
     path('ticket/<int:pk>', UpdateTickets.as_view(), name='ticket'),
+    path('role', CreateRole.as_view(), name='role'),
 ]

@@ -1,19 +1,39 @@
-from .models import User, Subcription, Session, Ticket
+from .models import User, Subcription, Session, Ticket, Role
 from rest_framework import serializers
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
     password=serializers.CharField(max_length = 68, min_length = 6, write_only = True)
-    user_type = serializers.ChoiceField(choices=User.USER_TYPE_CHOICES)
+    
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'phone_number', 'password', 'user_type')
+        fields = ('first_name', 'last_name', 'username', 'email', 'phone_number', 'password', 'roles')
+        
+    # def validate(self, attrs):
+    #     roles = attrs.get('roles', '')
+        
+    #     if roles == "Community Manager":
+    #         return self.communuty_manager == True
+    #     if roles == "Accountant":
+    #         self.accountant = True
+    #     if roles == "IT Support":
+    #         self.it_support = True
+            
+    #     return attrs
+    
+    # def create(self, validated_data):
+    #     return User.objects.create_user(**validated_data)
         
         
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ('role',)
+
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'phone_number', 'user_type')
+        fields = ('first_name', 'last_name', 'username', 'email', 'phone_number', 'roles')
         
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

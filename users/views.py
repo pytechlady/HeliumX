@@ -1,15 +1,15 @@
 from itertools import permutations
 from webbrowser import get
-from requests import request
 from rest_framework.response import Response
 from django.shortcuts import render
-from .models import Subcription, User, Session, Ticket
+from .models import Subcription, User, Session, Ticket, Role
 from rest_framework import generics, status, permissions
-from .serializers import AdminUserSerializer, UserListSerializer, LoginSerializer, UserUpdateSerializer, NewsLetter, UserSerializer, SubscriptionSerializer, SubscriptionListSerializer, SessionSerializer, TicketSerializer
+from .serializers import AdminUserSerializer, RoleSerializer, UserListSerializer, LoginSerializer, UserUpdateSerializer, NewsLetter, UserSerializer, SubscriptionSerializer, SubscriptionListSerializer, SessionSerializer, TicketSerializer
 from .permissions import IsCeo, IsCommunutyManager, IsAccountantPermissions, IsITSupportPermissions
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from .utils import Util
+from django.contrib.auth.hashers import make_password
 
 
 class RegisterAdminsClass(generics.GenericAPIView):
@@ -25,24 +25,33 @@ class RegisterAdminsClass(generics.GenericAPIView):
             last_name = serializer.validated_data['last_name']
             email = serializer.validated_data['email']
             phone_number = serializer.validated_data['phone_number']
-            password = serializer.validated_data['password']
-            user_type = serializer.validated_data['user_type']
+            password = make_password(serializer.validated_data['password'])
+            roles = serializer.validated_data['roles']
+            print(roles)
             try:    
-                user = User.objects.create(username=username, first_name=first_name, last_name=last_name, email=email, phone_number=phone_number, password=password)
-                if user_type == 'Community Manager':
-                    user.is_community_manager = True
-                elif user_type == 'Accountant':
-                    user.is_accountant = True
-                elif user_type == 'IT Support':
-                    user.is_IT_support = True
-                elif user_type == 'Admin':
-                    user.is_admin = True
+                user = User.objects.create(username=username, first_name=first_name, last_name=last_name, email=email, phone_number=phone_number, password=password, roles=roles)
                 user.save()
                 return Response({"success": f"{username} successfully created"}, status=status.HTTP_201_CREATED)
             except Exception as error:
                 return Response({"error":str(error)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+class CreateRole(generics.GenericAPIView):
+    serializer_class = RoleSerializer
+    permission_classes = (IsCeo,)
+    
+    """Endpoint to create roles only accessible by CEO"""
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            role = serializer.validated_data['role']
+            try:
+                role = Role.objects.create(role=role)
+                return Response({"success": f"{role} successfully created"}, status=status.HTTP_201_CREATED)
+            except Exception as error:
+                return Response({"error":str(error)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateAdminClass(generics.GenericAPIView):
     serializer_class = AdminUserSerializer
@@ -158,18 +167,16 @@ class Login(generics.GenericAPIView):
     permissions_classes = [permissions.AllowAny]
     
     """Endpoint to login a user"""
-    def post (self, request):
+    def post(self, request):
         username = request.data.get('username', '')
         password = request.data.get('password', '')
-        try:
-            user = User.objects.get(username=username)
-            if password == user.password:
-                token, _ = Token.objects.get_or_create(user=user)
-                return Response(data={'token': token.key,'username': user.username}, status=status.HTTP_200_OK)
-            if not user:
-                return Response(data={'invalid_credentials': 'Ensure both username and password are correct and you have verified your account'}, status=status.HTTP_400_BAD_REQUEST)   
-        except Exception as error:
-            return Response({"error":str(error)}, status=status.HTTP_400_BAD_REQUEST)
+        if username is None or password is None:
+            return Response(data={'invalid_credentials': 'Please provide both email and password'}, status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response(data={'invalid_credentials': 'Ensure both email and password are correct'}, status=status.HTTP_400_BAD_REQUEST)
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response(data={'token': token.key}, status=status.HTTP_200_OK)
 
 
 class SendNewsLetter(generics.GenericAPIView):

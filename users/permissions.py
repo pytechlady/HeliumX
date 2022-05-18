@@ -7,13 +7,13 @@ class IsCeo(permissions.BasePermission):
     
 class IsCommunutyManager(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_community_manager
+        return request.user.is_authenticated and request.user.roles.filter(role='Community Manager').exists()
 
     
 class IsAccountantPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_accountant
+        return request.user.is_authenticated and request.user.roles.filter(role='Accountant').exists()
 
 class IsITSupportPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_IT_support
+        return request.user.is_authenticated and request.user.roles.filter(role='IT Support').exists()

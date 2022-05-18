@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Session, Subcription, Ticket, User
+from .models import Session, Subcription, Ticket, User, Role
 
 
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','username', 'email', 'phone_number', 'user_type', 'created_at', 'updated_at')
+    list_display = ('id','username', 'email', 'phone_number', 'roles', 'created_at', 'updated_at')
     list_filter = ('created_at', 'updated_at')
     search_fields = ('username', 'email', 'phone_number')
     
@@ -33,3 +33,11 @@ class TicketAdmin(admin.ModelAdmin):
     search_fields = ('ticket_title', 'is_resolved')
     
 admin.site.register(Ticket, TicketAdmin)
+
+
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ('id','role')
+    list_filter = ('role',)
+    search_fields = ('role',)
+    
+admin.site.register(Role, RoleAdmin)
