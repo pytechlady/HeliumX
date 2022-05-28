@@ -4,37 +4,17 @@ from django.contrib.auth.base_user import BaseUserManager
 # Create your models here.
 
 class User(AbstractUser):
-    # USER_TYPE_CHOICES =[
-    #     ('Community Manager', 'Community Manager'),
-    #     ('IT Support', 'IT Support'),
-    #     ('Accountant', 'Accountant'),
-    #     ('Admin', 'Admin'),
-    #     ('Basic', 'Basic'),
-    # ]
     phone_number = models.CharField(max_length=15)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     basic_user =models.BooleanField(default=False)
-    # is_community_manager = models.BooleanField(default=False)
-    # is_accountant = models.BooleanField(default=False)
-    # is_IT_support = models.BooleanField(default=False)
     is_CEO = models.BooleanField(default=False)
+    is_community_manager = models.BooleanField(default=False)
+    is_accountant = models.BooleanField(default=False)
+    is_IT_support = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     roles = models.ForeignKey('Role', on_delete=models.CASCADE, null=True, blank=True)
     is_subscribed = models.BooleanField(default=False)
-    
-    # def roles(self):
-    #     if self.is_community_manager:
-    #         return 'Community Manager'
-    #     elif self.is_accountant:
-    #         return 'Accountant'
-    #     elif self.is_IT_support:
-    #         return 'IT Support'
-    #     elif self.is_admin:
-    #         return 'Admin'
-    #     else:
-    #         return 'Basic'
-    # roles.short_description = 'roles'  # column name
     
     def __str__(self):
         return self.username

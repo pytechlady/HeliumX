@@ -20,20 +20,21 @@ class RegisterAdminsClass(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data['username']
-            first_name =serializer.validated_data['first_name']
-            last_name = serializer.validated_data['last_name']
-            email = serializer.validated_data['email']
-            phone_number = serializer.validated_data['phone_number']
             password = make_password(serializer.validated_data['password'])
-            roles = serializer.validated_data['roles']
-            print(roles)
-            try:    
-                user = User.objects.create(username=username, first_name=first_name, last_name=last_name, email=email, phone_number=phone_number, password=password, roles=roles)
-                user.save()
-                return Response({"success": f"{username} successfully created"}, status=status.HTTP_201_CREATED)
-            except Exception as error:
-                return Response({"error":str(error)}, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save(password=password)
+            user_data = serializer.data
+            print(user_data)
+            user = User.objects.get(email=user_data['email'])
+            if user_data['roles'] == 2:
+                 user.is_accountant = True
+            elif user_data['roles'] == 3:
+                user.is_IT_support = True
+            elif user_data['roles'] == 1:
+                user.is_community_manager = True
+            else:
+                return Response({"message": "Invalid Role"}, status=status.HTTP_400_BAD_REQUEST)
+            user.save()
+            return Response({"success": f"{user_data['username']} successfully created"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -52,6 +53,12 @@ class CreateRole(generics.GenericAPIView):
             except Exception as error:
                 return Response({"error":str(error)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    '''Endpoint to get all roles only accessible by CEO'''
+    def get(self, request):
+        roles = Role.objects.all()
+        serializer = RoleSerializer(roles, many=True)
+        return Response(serializer.data)
 
 class UpdateAdminClass(generics.GenericAPIView):
     serializer_class = AdminUserSerializer
@@ -193,7 +200,7 @@ class SendNewsLetter(generics.GenericAPIView):
             try:
                 for email in get_all_users_emails:
                     email_body = f"{title} \n\n {body}"
-                    data = data = {'email_body': email_body, 'to_email': email, 'email_subject': title}
+                    data = {'email_body': email_body, 'to_email': email, 'email_subject': title}
                     Util.send_email(data)
                 return Response({"success": f"{title} successfully sent"}, status=status.HTTP_201_CREATED)
             except Exception as error:
